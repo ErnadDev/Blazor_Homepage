@@ -1,3 +1,3 @@
 # Blazor_Homepage
 
-Erstes Blazor  Projek
+Erstes Blazor  Projekt
