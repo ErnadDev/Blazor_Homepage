@@ -1,0 +1,62 @@
+﻿@page "/SkillMatrix"
+
+@using Homepage.GlobalDefinitions.Collections
+@using System.Text.Json
+@using System.Net.Http.Headers;
+
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+
+@inject IHttpClientFactory http
+
+<section class="skills">
+    @foreach (var skill in listSkills)
+    {
+        <div class="skill-item">
+            <h2>@skill.Name</h2>
+            <div class="row">
+                <div class="col-lg-10">
+                    <div class="progress" style="height: 40px">
+                        <div class="progress-bar" role="progressbar" style="width: @skill.Value%;" aria-valuenow="@skill.Value" aria-valuemin="0" aria-valuemax="100">@skill.Value%</div>
+                    </div>
+                </div>
+                <div class="col-lg-2 mt-2 mt-lg-0">
+                    <a class="btn btn-danger" href="@skill.CodeSnippet" role="button" target="_blank"><i class="fa fa-code"></i> Code-Snippet</a>
+                </div>
+            </div>
+        </div>
+    }
+</section>
+
+@code {
+    List<ListSkills> listSkills = new List<ListSkills>();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        LoadSkillMatrix();
+
+        StateHasChanged();
+    }
+
+    public void LoadSkillMatrix()
+    {
+        string restService = config.GetSection("APIServices")["apiURL"].ToString();
+        string restUser = config.GetSection("APIServices")["apiUsername"].ToString();
+        string restPassword = config.GetSection("APIServices")["apiPassword"].ToString();
+        var client = http.CreateClient();
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+        "Basic", Convert.ToBase64String(
+            System.Text.ASCIIEncoding.ASCII.GetBytes(
+               $""+restUser+":"+restPassword+"")));
+
+        var result = client.GetAsync(""+restService+"/api/Skill/GetSkills").Result;
+
+        if (result.IsSuccessStatusCode)
+        {
+            var data = result.Content.ReadAsStringAsync().Result;
+
+            listSkills = JsonSerializer.Deserialize<List<ListSkills>>(data);
+        }
+
+    }
+}
