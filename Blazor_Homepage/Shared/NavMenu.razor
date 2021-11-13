@@ -1,32 +1,58 @@
 ﻿<nav class="navbar navbar-expand-lg navbar-dark bgBlue">
     <div class="container">
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" @onclick="ToggleNavMenu">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+
+        <div class="@NavMenuCssClass" @onclick="ToggleNavMenu">
             <ul class="navbar-nav w-100">
-                <li class="nav-item" id="Homepage">
-                    <a class="nav-link" href="#">Startseite</a>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Homepage" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Startseite
+                    </NavLink>
                 </li>
-                <li class="nav-item" id="AboutMe">
-                    <a class="nav-link" href="#">Über mich</a>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/AboutMe" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Über mich
+                    </NavLink>
                 </li>
-                <li class="nav-item" id="Skills">
-                    <a class="nav-link" href="#">Skill-Matrix</a>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/SkillMatrix" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Skill - Matrix
+                    </NavLink>
                 </li>
-                <li class="nav-item" id="CV">
-                    <a class="nav-link" href="#">Lebenslauf</a>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/CV" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Lebenslauf
+                    </NavLink>
                 </li>
-                <li class="nav-item" id="Project">
-                    <a class="nav-link" href="#">Projekte</a>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Projects" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Projekte
+                    </NavLink>
                 </li>
-                <li class="nav-item" id="Contact">
-                    <a class="nav-link" href="#">Kontakt</a>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Contact" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Kontakt
+                    </NavLink>
                 </li>
-                <li class="nav-item ml-auto" id="Logout">
-                    <a class="nav-link text-danger font-weight-bold" href="#">Abmelden</a>
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/Logout" Match="NavLinkMatch.All">
+                        <span class="oi oi-home" aria-hidden="true"></span> Abmelden
+                    </NavLink>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
+
+@code{
+    private bool collapseNavMenu = true;
+
+    private string NavMenuCssClass => collapseNavMenu ? "collapse navbar-collapse" : null;
+
+    private void ToggleNavMenu()
+    {
+        collapseNavMenu = !collapseNavMenu;
+    }
+}
