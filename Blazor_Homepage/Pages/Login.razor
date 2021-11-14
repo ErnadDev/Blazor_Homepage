@@ -1,5 +1,64 @@
-﻿<h3>Login</h3>
+﻿@page "/"
+
+@using Homepage.GlobalDefinitions.Models
+@using System.Text.Json
+@using System.Net.Http.Headers;
+
+@layout LoginLayout
+
+@inject Microsoft.Extensions.Configuration.IConfiguration config
+@inject IHttpClientFactory http
+
+<div class="container h-100 d-flex justify-content-center align-items-center">
+    <div class="d-flex flex-column justify-content-center col-lg-7">
+        <img class="mb-4" src="https://cdn4.iconfinder.com/data/icons/cyber-security-29/512/security-cyber-digital-secure-21-512.png" alt="" width="72" height="72">
+
+        <h1 class="h3 mb-3 font-weight-normal">Autorisieren Sie sich</h1>
+
+        <label for="inputAuthCode" class="sr-only">Auth-Code</label>
+        <input @bind="@authentificationPassword" class="form-control" type="password" placeholder="Authentification Code" autofocus required />
+
+        <button class="btn btn-lg btn-primary btn-block my-3" type="submit">Autorisieren</button>
+        <p class="text-muted">© 2021 Ernad Jakupovic</p>
+    </div>
+</div>
 
 @code {
+    Config currentConfig = new Config();
 
+    string authentificationPassword;
+
+    public void StartAuthentification()
+    {
+        if(authentificationPassword != currentConfig.AuthCode)
+        {
+
+        }
+        else
+        {
+
+        }
+    }
+
+    public void LoadConfig()
+    {
+        string restService = config.GetSection("APIServices")["apiURL"].ToString();
+        string restUser = config.GetSection("APIServices")["apiUsername"].ToString();
+        string restPassword = config.GetSection("APIServices")["apiPassword"].ToString();
+        var client = http.CreateClient();
+
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(
+        "Basic", Convert.ToBase64String(
+            System.Text.ASCIIEncoding.ASCII.GetBytes(
+               $"" + restUser + ":" + restPassword + "")));
+
+        var result = client.GetAsync("" + restService + "/api/Config/GetConfig").Result;
+
+        if (result.IsSuccessStatusCode)
+        {
+            var data = result.Content.ReadAsStringAsync().Result;
+
+            currentConfig = JsonSerializer.Deserialize<Config>(data);
+        }
+    }
 }
