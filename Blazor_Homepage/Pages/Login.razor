@@ -3,11 +3,14 @@
 @using Homepage.GlobalDefinitions.Models
 @using System.Text.Json
 @using System.Net.Http.Headers;
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
 
 @layout LoginLayout
 
 @inject Microsoft.Extensions.Configuration.IConfiguration config
 @inject IHttpClientFactory http
+@inject NavigationManager navigationManager
+@inject ProtectedLocalStorage protectedLocalStorage
 
 <div class="container h-100 d-flex justify-content-center align-items-center">
     <div class="d-flex flex-column justify-content-center col-lg-7">
@@ -18,7 +21,12 @@
         <label for="inputAuthCode" class="sr-only">Auth-Code</label>
         <input @bind="@authentificationPassword" class="form-control" type="password" placeholder="Authentification Code" autofocus required />
 
-        <button class="btn btn-lg btn-primary btn-block my-3" type="submit">Autorisieren</button>
+        @if (!string.IsNullOrEmpty(errorMessage))
+        {
+            <div class="alert alert-danger mt-2">@errorMessage</div>
+        }
+
+        <button class="btn btn-lg btn-primary btn-block my-3" @onclick="StartAuthentification">Autorisieren</button>
         <p class="text-muted">© 2021 Ernad Jakupovic</p>
     </div>
 </div>
@@ -26,17 +34,32 @@
 @code {
     Config currentConfig = new Config();
 
+    [CascadingParameter]
+    protected bool Logged { get; set; }
+
     string authentificationPassword;
+
+    string errorMessage;
 
     public void StartAuthentification()
     {
-        if(authentificationPassword != currentConfig.AuthCode)
+        if (authentificationPassword == currentConfig.AuthCode)
         {
+            Logged = true;
 
+            protectedLocalStorage.SetAsync("Logged", true);
+
+            navigationManager.NavigateTo("/Index");
         }
         else
         {
+            Logged = false;
 
+            authentificationPassword = string.Empty;
+
+            errorMessage = "Authentification Code ist leider nicht richtig !";
+
+            StateHasChanged();
         }
     }
 

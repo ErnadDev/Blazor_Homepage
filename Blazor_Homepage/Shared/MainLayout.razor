@@ -1,5 +1,15 @@
 ﻿@inherits LayoutComponentBase
 
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+
+@inject NavigationManager navigationManager
+@inject ProtectedLocalStorage protectedLocalStorage
+
+@if (proveLogged())
+{
+    navigationManager.NavigateTo("/Index");
+}
+
 <div class="wrapper">
     <header>
         <div class="container">
@@ -54,3 +64,14 @@
         </div>
     </div>
 </footer>
+
+@code{
+    bool logged;
+
+    public bool proveLogged()
+    {
+        var x = protectedLocalStorage.GetAsync<string>("Logged");
+
+        return false;
+    }
+}
